@@ -23,8 +23,11 @@ The following line initializes the datbase
 
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
+    print("Get drinks")
     try:
         drinks = Drink.query.all()
+        print(drinks)
+        print("drinks above")
 
         return jsonify({
             'success': True,
