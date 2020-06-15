@@ -16,19 +16,22 @@ The following line initializes the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-#db_drop_and_create_all()
+# db_drop_and_create_all()
 
 # ROUTES
 
 
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
-    drinks = Drink.query.all()
+    try:
+        drinks = Drink.query.all()
 
-    return jsonify({
-        'success': True,
-        'drinks': [drink.short() for drink in drinks]
-    })
+        return jsonify({
+            'success': True,
+            'drinks': [drink.short() for drink in drinks]
+        })
+    except Exception:
+        abort(404)
 
 
 @app.route('/drinks-detail', methods=['GET'])
@@ -41,7 +44,8 @@ def get_drinks_detail(token):
             'success': True,
             'drinks': [drink.long() for drink in drinks]
         })
-    except:
+    except Exception:
+        print('exception')
         abort(404)
 
 
@@ -66,7 +70,7 @@ def create_drink(token):
             'drinks': [drink.long()]
         })
 
-    except:
+    except Exception:
         abort(422)
 
 
@@ -94,7 +98,7 @@ def update_drink(token, id):
                 'success': True,
                 'drinks': [drink.long()]
             })
-        except:
+        except Exception:
             abort(422)
     else:
         abort(404)
@@ -115,7 +119,7 @@ def delete_drink(token, id):
             'delete': id
         })
 
-    except:
+    except Exception:
         abort(422)
 
 # Error Handling
@@ -127,7 +131,7 @@ def unprocessable(error):
         'success': False,
         'error': 422,
         'message': 'unprocessable'
-    }, 422)
+    }), 422
 
 
 @app.errorhandler(404)
@@ -136,7 +140,7 @@ def not_found(error):
         'success': False,
         'error': 404,
         'message': 'resource not found'
-    }, 404)
+    }), 404
 
 
 @app.errorhandler(AuthError)
